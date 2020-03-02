@@ -2,126 +2,202 @@
 
 echo "-------------------------------------------------WELL COME TO TIC TAC TOE GAME------------------------------------------"
 
-#DECLEAR DICTIONARY
+# CONSTANTS
+BOARD_POSITION=9
+ROWS=3
+COLUMNS=3
+HEAD=1
+TAIL=0
+
+# VARIABLES
+playerTurn=false
+winner=false
+turn=0
+player1=0
+player2=0
+nonEmptyCount=1
+
+# STORE IN ARRAY
 declare -a gameBoard
 
-#VARIABLE
-playerSymbol=0
-computerSymbol=0
-
-#TO GAME BOARD SIZE
-function resettingBoard(){
-	for(( index=1; index<=9; index++ ))
+# FUNCTION FOR BOARD INITAILISE
+function boardInitialize(){
+	for (( index=1 ; index<=$BOARD_POSITION; index++ ))
 	do
-			gameBoard[$index]="$index"
+		gameBoard[$index]=0
 	done
 }
 
-#TO GAME USE THE SYMBOL
-function assignLatter(){
-	assignLatter=$((RANDOM%2))
-	if [ $assignLatter -eq 1 ]
+# DISPLAY BOARD
+function  displayBoard(){
+	echo " ------------- "
+	echo " | "${board[1]}" | "${board[2]}" | "${board[3]}" | "
+	echo " ------------- "
+	echo " | "${board[4]}" | "${board[5]}" | "${board[6]}" | "
+	echo " ------------- "
+	echo " | "${board[7]}" | "${board[8]}" | "${board[9]}" | "
+	echo " ------------- "
+}
+
+# HORIZONTAL CHECK
+function checkHorizontal(){
+	local position=1
+	counter=1
+	while [ $counter -le $ROWS ]
+	do
+		if [[ ${board[$position]} == ${board[$position+1]} ]] && [[ ${board[$position+1]} == ${board[$position+2]} ]] && [[ ${board[$position+2]} == $1 ]]
+		then
+			displayBoard
+			echo "$1 wins"
+			winner=true
+			break
+		else
+			position=$(( $position+$ROWS ))
+		fi
+			counter=$(( $counter+1 ))
+	done
+}
+
+# VERTICAL CHECK
+function checkVertical(){
+	position=1
+	counter=1
+	while [ $counter -le $ROWS ]
+	do
+		if [[ ${board[$position]} == ${board[$position+3]} ]] && [[ ${board[$position+3]}  ==  ${board[$position+6]} ]] && [[ ${board[$position+6]} == $1 ]]
+		then
+			displayBoard
+			echo "$1 Wins"
+			winner=true
+			break
+		else
+			position=$(( $position+1 ))
+		fi
+			counter=$(( $counter+1 ))
+	done
+}
+
+# DIAGONAL CHECK
+function checkDiagonal(){
+	position=1
+	counter=1
+	while [ $counter -le 2 ]
+	do
+		if [[ ${board[$position]} == ${board[$position+4]} ]] && [[ ${board[$position+4]}  ==  ${board[$position+8]} ]] && [[ ${board[$position+8]} == $1 ]]
+		then
+			displayBoard
+			echo " $1 wins "
+			winner=true
+			break
+		elif [[ ${board[$position+2]} == ${board[$position+4]} ]] && [[  ${board[$position+4]}  ==  ${board[$position+6]} ]] && [[ ${board[$position+6]} == $1 ]]
+		then
+			displayBoard
+			echo " $1 wins "
+			winner=true
+			break
+		fi
+			counter=$(($counter+1))
+	done
+}
+
+# CHECK TIE CASE
+function checkTie(){
+	while [[ ${board[$nonEmptyCount]} -ne 0 ]]
+	do
+		if [ $nonEmptyCount -eq $BOARD_POSITION ]
+		then
+			displayBoard
+			echo "Game is tie"
+			winner=true
+			break
+		else
+			nonEmptyCount=$(($nonEmptyCount+1))
+		fi
+	done
+}
+
+# USER INPUT1
+function userInput1() {
+	row=1
+	column=3
+	winMovePlayer1=false
+	read -p "Enter player1 in between 1 to 9: " POSITION
+	if [ $winMovePlayer1 == false ]
 	then
-			playerSymbol=X
+		if [ ${gameBoard[$POSITION]} -eq $TAIL ]
+		then
+			echo "Player turn"
+			board[$POSITION]=$player1
+			displayBoard
+			turn=$(( $turn + 1 ))
+		else
+			echo "Invalid input"
+         userInput1
+		fi
+	fi
+	playerTurn=false
+}
+
+# USER INPUT2
+function userInput2() {
+	row=1
+	column=3
+	winMovePlayer2=false
+	POSITION=$((RANDOM%9))
+	if [ $winMovePlayer2 == false ]
+	then
+		if [ ${gameBoard[$POSITION]} -eq $TAIL ]
+		then
+			echo "Player turn"
+			board[$POSITION]=$player2
+			displayBoard
+			turn=$(( $turn + 1 ))
+		else
+			echo "Invalid input"
+         userInput2
+		fi
+	fi
+			playerTurn=true
+}
+
+# FUNCTION FOR TIC TAC TOE
+function ticTacToe(){
+	checkingToss=$((RANDOM%2))
+	if [[ $checkingToss -eq $HEAD ]]
+	then
+		playerTurn=true
+		player1='X'
+		player2='O'
+			echo "Player1 will play first"
+		displayBoard
 	else
-			computerSymbol=O
+		player2='X'
+		player1='O'
+			echo "Player2 will play first"
 	fi
 }
 
-#TO DISPLAY BOARD
-function displayBoard(){
-	local index=1
-	for (( indexOne=0; indexOne<3; indexOne++ ))
-	do
-			echo "|---|---|---|"
-			echo "| "${gameBoard[$index]}" | "${gameBoard[$index+1]}" | "${gameBoard[$index+2]}" |"
-			index=$(($index+3))
-	done
+# FUNCTION CALL
+boardInitialize
+ticTacToe
 
-}
-
-#TO CHECK FOR DIAGONAL
-function checkForDiagonal(){
-	for (( index=1; index<2; index++ ))
-			do
-			if [[ ${gameBoard[$index]} == ${gameBoard[$index+4]} ]] && [[ ${gameBoard[$index+4]} == ${gameBoard[$index+8]} ]] && [[ ${gameBoard[$index+8]} == $playerSymbol ]]
-			then
-				displayBoard
-				echo "Game Win"
-				exit
-			elif [[ ${gameBoard[$index+2]} == ${gameBoard[$index+4]} ]] && [[ ${gameBoard[$index+4]} == ${gameBoard[$index+6]} ]] && [[ ${gameBoard[$index+6]} == $playerSymbol ]]
-			then
-				displayBoard
-				echo "Game Win"
-				exit
-			fi
-		done
-}
-
-#TO CHECK FOW ROW
-function checkForRow(){
-		for (( row=1; row<=9; row=row+3 ))
-		do
-			if [[ ${gameBoard[$row]} == ${gameBoard[$row+1]} ]] && [[ ${gameBoard[$row+1]} == ${gameBoard[$row+2]} ]] && [[ ${gameBoard[$row+2]} == $playerSymbol ]]	
-			then
-				displayBoard
-				echo "Game Win"
-				exit
-			fi
-		done
-
-	}
-#TO CHECK FOR COLUMN
-function checkForColumn(){
-		for (( column=1; column<=3; column++ ))
-		do
-			if [[ ${gameBoard[$column]} == ${gameBoard[$column+3]} ]] && [[ ${gameBoard[$column+3]} == ${gameBoard[$column+6]} ]] && [[ ${gameBoard[$column+6]} == $playerSymbol ]]
-			then
-				displayBoard
-				echo "Game win"
-				exit
-			fi
-		done
-}
-
-#TO FUNCTION CALL
-function checkForWin(){
-		checkForDiagonal
-		checkForRow
-		checkForColumn
-}
-
-#TO FUNCTION PLAY
-function startPlaying(){
-local index=1
-local minValue=0
-local maxValue=9
-local player="Player"
-
-while [[ $index -gt $minValue && $index -le $maxValue ]]
+# CHECK WHO WINS
+while [ $winner == false ]
 do
-	if [ $turn == $player ]
+	displayBoard
+	if [ $playerTurn == true ]
 	then
-		displayBoard
-		echo "Enter the cell number to put your symbol"
-		read index
-					if [ ${gameBoard[$index]} -eq $index ]
-					then
-							gameBoard[$index]=$playerSymbol
-							checkForWin
-					else
-							echo "check for empty cell"
-					fi
+		userInput1 $player1
+		checkHorizontal $player1
+		checkVertical $player1
+		checkDiagonal $player1
+		checkTie $player1
+	else
+		userInput2 $player2
+		checkHorizontal $player2
+		checkVertical $player2
+		checkDiagonal $player2
+		checkTie $player2
 	fi
 done
-}
 
-#TO FUNCTION CALL
-function main(){
-	resettingBoard
-	assignLatter
-	displayBoard
-	checkForWin
-	startPlaying
-}
-main
