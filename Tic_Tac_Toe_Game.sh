@@ -55,10 +55,10 @@ function rowPosition(){
 			then
 				if [[ ${gameBoard[$index+2]} == $RESET_LETTER ]]
 				then
-	         	 echo "$(($index+2))"
-				break
+					echo "$(($index+2))"
+					break
 				fi
-	   	elif [[ ${gameBoard[$index]} == ${gameBoard[$index+2]} ]] &&  [[ ${gameBoard[$index+2]} == $1  ]]
+			elif [[ ${gameBoard[$index]} == ${gameBoard[$index+2]} ]] &&  [[ ${gameBoard[$index+2]} == $1  ]]
 			then
 				if [[ ${gameBoard[$index+1]} == $RESET_LETTER ]]
 				then
@@ -72,7 +72,7 @@ function rowPosition(){
 					echo "$(( $index ))"
 				break
 				fi
-	   	fi
+				fi
 	  	done
 }
 
@@ -88,63 +88,63 @@ function columnPosition(){
 					echo " $(($index+6))"
 					break
 	         fi
-	    	elif [[ ${gameBoard[$index]} == ${gameBoard[$index+6]} ]] &&  [[ ${gameBoard[$index+6]} == $1  ]]
-	    	then
+	    	 elif [[ ${gameBoard[$index]} == ${gameBoard[$index+6]} ]] &&  [[ ${gameBoard[$index+6]} == $1  ]]
+	    	 then
 				if [[ ${gameBoard[$index+3]} == $RESET_LETTER ]]
 	         then
 					echo "$(( $index+3 ))"
 					break
 	         fi
-	    	elif [[ ${gameBoard[$index+3]} == ${gameBoard[$index+6]} ]] &&  [[ ${gameBoard[$index+6]} == $1  ]]
-	    	then
+	    	 elif [[ ${gameBoard[$index+3]} == ${gameBoard[$index+6]} ]] &&  [[ ${gameBoard[$index+6]} == $1  ]]
+	    	 then
 				if [[ ${gameBoard[$index]} == $RESET_LETTER ]]
 	         then
 	        		echo "$(( $index ))"
 					break
 	         fi
-	    	fi
-	   done
+	    	 fi
+		done
 }
 
 function diagonalPosition(){
 		if [ ${gameBoard[1]} == ${gameBoard[5]} ] && [ ${gameBoard[5]} == $1 ]
-	   then
+		then
 			if [ ${gameBoard[9]} == $RESET_LETTER ]
-	      then
+			then
 				echo "9"
-	      fi
+			fi
 		elif [ ${gameBoard[1]} == ${gameBoard[9]} ] && [ ${gameBoard[9]} == $1 ]
-	   then
+		then
 			if [ ${gameBoard[5]} == $RESET_LETTER ]
 			then
 				echo "5"
 			fi
 		elif [ ${gameBoard[5]} == ${gameBoard[9]} ] && [ ${gameBoard[9]} == $1 ]
-	   then
+	   	then
 			if [ ${gameBoard[1]} == $RESET_LETTER ]
-	      then
+	     		then
 				echo "1"
 			fi
 		elif [ ${gameBoard[3]} == ${gameBoard[5]} ] && [ ${gameBoard[5]} == $1 ]
 		then
-	      if [ ${gameBoard[7]} == $RESET_LETTER ]
-	      then
-	         echo "7"
+	      		if [ ${gameBoard[7]} == $RESET_LETTER ]
+	      		then
+	         		echo "7"
 				gameBoard[7]=$1
-	      fi
+	      		fi
 		elif [ ${gameBoard[7]} == ${gameBoard[5]} ] && [ ${gameBoard[5]} == $1 ]
-	   then
-	      if [ ${gameBoard[3]} == $RESET_LETTER ]
-	      then
-	         echo "3"
-	      fi
-	   elif [ ${gameBoard[3]} == ${gameBoard[7]} ] && [ ${gameBoard[7]} == $1 ]
-	   then
-	      if [ ${gameBoard[5]} == $RESET_LETTER ]
-	      then
-	         echo "5"
-	      fi
-	   fi
+	   	then
+	      		if [ ${gameBoard[3]} == $RESET_LETTER ]
+	      		then
+	         		echo "3"
+	     		 fi
+	   	elif [ ${gameBoard[3]} == ${gameBoard[7]} ] && [ ${gameBoard[7]} == $1 ]
+	   	then
+	      		if [ ${gameBoard[5]} == $RESET_LETTER ]
+	      		then
+	         		echo "5"
+	      		fi
+	   	fi
 }
 
 #TO PLAYER MOVE
