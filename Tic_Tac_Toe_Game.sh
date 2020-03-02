@@ -5,6 +5,7 @@ echo "-------------------------------------------------WELL COME TO TIC TAC TOE 
 #DECLEAR DICTIONARY
 declare -a gameBoard
 
+#CONSTANT
 POSITION=9
 PLAYER_LETTER="X"
 COMPUTER_LETTER="O"
@@ -138,6 +139,7 @@ function main(){
 			computerMove
 			chance=$(($chance+1))
 		fi
-	done
+done
 }
 main
+
