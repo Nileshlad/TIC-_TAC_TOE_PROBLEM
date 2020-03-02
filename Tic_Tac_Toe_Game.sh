@@ -18,13 +18,13 @@ player2=0
 nonEmptyCount=1
 
 # STORE IN ARRAY
-declare -a gameBoard
+declare -a board
 
 # FUNCTION FOR BOARD INITAILISE
 function boardInitialize(){
 	for (( index=1 ; index<=$BOARD_POSITION; index++ ))
 	do
-		gameBoard[$index]=0
+		board[$index]=0
 	done
 }
 
@@ -124,7 +124,7 @@ function userInput1() {
 	read -p "Enter player1 in between 1 to 9: " POSITION
 	if [ $winMovePlayer1 == false ]
 	then
-		if [ ${gameBoard[$POSITION]} -eq $TAIL ]
+		if [ ${board[$POSITION]} -eq $TAIL ]
 		then
 			echo "Player turn"
 			board[$POSITION]=$player1
@@ -146,7 +146,7 @@ function userInput2() {
 	POSITION=$((RANDOM%9))
 	if [ $winMovePlayer2 == false ]
 	then
-		if [ ${gameBoard[$POSITION]} -eq $TAIL ]
+		if [ ${board[$POSITION]} -eq $TAIL ]
 		then
 			echo "Player turn"
 			board[$POSITION]=$player2
@@ -200,4 +200,3 @@ do
 		checkTie $player2
 	fi
 done
-
