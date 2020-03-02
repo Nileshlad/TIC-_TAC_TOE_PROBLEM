@@ -5,123 +5,139 @@ echo "-------------------------------------------------WELL COME TO TIC TAC TOE 
 #DECLEAR DICTIONARY
 declare -a gameBoard
 
-#VARIABLE
-playerSymbol=0
-computerSymbol=0
+POSITION=9
+PLAYER_LETTER="X"
+COMPUTER_LETTER="O"
+RESET_LETTER="_"
 
-#TO GAME BOARD SIZE
-function resettingBoard(){
-	for(( index=1; index<=9; index++ ))
+#VARIABLES
+chance=0
+valid=true
+stop=false
+
+#DECLEAR GAME BOARD
+declare -a gameBoard
+	for (( index=1; index<=$POSITION; index++))
 	do
-			gameBoard[$index]="$index"
+	   gameBoard[$index]=$RESET_LETTER
 	done
-}
 
-#TO GAME USE THE SYMBOL
-function assignLatter(){
-	assignLatter=$((RANDOM%2))
-	if [ $assignLatter -eq 1 ]
+#CHECK TO PLAY FIRST
+function toss(){
+	toss=$((RANDOM%2))
+	if [[ $toss -eq 1 ]]
 	then
-			playerSymbol=X
+		echo "player"
 	else
-			computerSymbol=O
+		echo  "computer"
 	fi
 }
 
-#TO DISPLAY BOARD
+#TO DISPLAY GAME BOARD
 function displayBoard(){
-	local index=1
-	for (( indexOne=0; indexOne<3; indexOne++ ))
+	for (( index=1; index<=$POSITION; index=$(($index+3)) ))
 	do
-			echo "|---|---|---|"
-			echo "| "${gameBoard[$index]}" | "${gameBoard[$index+1]}" | "${gameBoard[$index+2]}" |"
-			index=$(($index+3))
+		echo  "${gameBoard[index]} |  ${gameBoard[index+1]} | ${gameBoard[index+2]}"
 	done
-
 }
 
-#TO CHECK FOR DIAGONAL
-function checkForDiagonal(){
-	for (( index=1; index<2; index++ ))
-			do
-			if [[ ${gameBoard[$index]} == ${gameBoard[$index+4]} ]] && [[ ${gameBoard[$index+4]} == ${gameBoard[$index+8]} ]] && [[ ${gameBoard[$index+8]} == $playerSymbol ]]
-			then
-				displayBoard
-				echo "Game Win"
-				exit
-			elif [[ ${gameBoard[$index+2]} == ${gameBoard[$index+4]} ]] && [[ ${gameBoard[$index+4]} == ${gameBoard[$index+6]} ]] && [[ ${gameBoard[$index+6]} == $playerSymbol ]]
-			then
-				displayBoard
-				echo "Game Win"
-				exit
-			fi
-		done
-}
-
-#TO CHECK FOW ROW
-function checkForRow(){
-		for (( row=1; row<=9; row=row+3 ))
-		do
-			if [[ ${gameBoard[$row]} == ${gameBoard[$row+1]} ]] && [[ ${gameBoard[$row+1]} == ${gameBoard[$row+2]} ]] && [[ ${gameBoard[$row+2]} == $playerSymbol ]]	
-			then
-				displayBoard
-				echo "Game Win"
-				exit
-			fi
-		done
-
-	}
-#TO CHECK FOR COLUMN
-function checkForColumn(){
-		for (( column=1; column<=3; column++ ))
-		do
-			if [[ ${gameBoard[$column]} == ${gameBoard[$column+3]} ]] && [[ ${gameBoard[$column+3]} == ${gameBoard[$column+6]} ]] && [[ ${gameBoard[$column+6]} == $playerSymbol ]]
-			then
-				displayBoard
-				echo "Game win"
-				exit
-			fi
-		done
-}
-
-#TO FUNCTION CALL
-function checkForWin(){
-		checkForDiagonal
-		checkForRow
-		checkForColumn
-}
-
-#TO FUNCTION PLAY
-function startPlaying(){
-local index=1
-local minValue=0
-local maxValue=9
-local player="Player"
-
-while [[ $index -gt $minValue && $index -le $maxValue ]]
-do
-	if [ $turn == $player ]
+#TO PLAYER MOVE
+function playerMove(){
+	read -p "Player where you want to put mark :" playerMarkPosition
+	if [[ ${gameBoard[$playerMarkPosition]} == $RESET_LETTER ]]
 	then
-		displayBoard
-		echo "Enter the cell number to put your symbol"
-		read index
-					if [ ${gameBoard[$index]} -eq $index ]
-					then
-							gameBoard[$index]=$playerSymbol
-							checkForWin
-					else
-							echo "check for empty cell"
-					fi
+		gameBoard[$playerMarkPosition]=$PLAYER_LETTER
+	else
+		echo  "already filled"
 	fi
-done
 }
 
-#TO FUNCTION CALL
+#TO COMPUTER MOVE
+function computerMove(){
+	read -p "Computer Where you want to put mark :" compMarkPosition
+	if [[ ${gameBoard[$compMarkPosition]} == $RESET_LETTER ]]
+	then
+		gameBoard[$compMarkPosition]=$COMPUTER_LETTER
+	else
+		echo "already filled"
+	fi
+		checkRow $COMPUTER_LETTER
+	}
+
+#TO ROW FUNCTION
+function checkRow(){
+	for (( index=1; index<=9; index=index+3 ))
+	do
+		if [[ ${gameBoard[$index]} == ${gameBoard[$index+1]} ]] && [[ ${gameBoard[$index+1]} == ${gameBoard[$index+2]} ]] && [[ ${gameBoard[$index+2]} == $playerSymbol ]]	
+		then
+			displayBoard
+			echo "Game Win"
+			exit
+		fi
+	done
+}
+
+#TO COLUMN FUNCTION
+function checkColumn(){
+		for (( index=1; index<=3; index++ ))
+		do
+		if [[ ${gameBoard[$index]} == ${gameBoard[$index+3]} ]] && [[ ${gameBoard[$index+3]} == ${gameBoard[$index+6]} ]] && [[ ${gameBoard[$index+6]} == $playerSymbol ]]
+		then
+			displayBoard
+			echo "Game win"
+			exit
+		fi
+		done
+}
+
+#TO CHECK DIAGONAL 
+function checkDiagonal(){
+	for (( index=1; index<2; index++ ))
+	do
+		if [[ ${gameBoard[$index]} == ${gameBoard[$index+4]} ]] && [[ ${gameBoard[$index+4]} == ${gameBoard[$index+8]} ]] && [[ ${gameBoard[$index+8]} == $playerSymbol ]]
+		then
+			displayBoard
+			printf "Game Win"
+			exit
+		elif [[ ${gameBoard[$index+2]} == ${gameBoard[$index+4]} ]] && [[ ${gameBoard[$index+4]} == ${gameBoard[$index+6]} ]] && [[ ${gameBoard[$index+6]} == $playerSymbol ]]
+		then
+			displayBoard
+			printf "Game Win"
+			exit
+			fi
+		done
+}
+
+#TO CHECK TO WIN
+function finalWin(){
+	count=1
+	while [ ${gameBoard[$count]} != '-' ]
+	do
+		if [ $count -eq 9 ]
+		then
+		displayBoard
+		printf "Game Is tie"
+		stop=true
+		break
+		else
+		count=$($count+1)
+		fi
+		done
+	}
+
+#TO CHECK CHANCE AND MAIN FUNCTION CALL
 function main(){
-	resettingBoard
-	assignLatter
-	displayBoard
-	checkForWin
-	startPlaying
+	while [ $stop == false ]
+	do
+		displayBoard
+		if [[ $(($chance%2)) -eq 0 ]]
+		then
+			playerMove
+			chance=$(($chance+1))
+		else
+			computerMove
+			chance=$(($chance+1))
+		fi
+	done
 }
 main
